@@ -1,0 +1,37 @@
+<div class="academic-work-frame">
+  <iframe
+    id="ericaHandbook-credit-cancellation"
+    src="https://yoorhi816.github.io/erica-academic-handbook/?embed=credit-cancellation&amp;v=20260911-1"
+    title="학점포기 안내"
+    loading="lazy"
+    width="100%"
+    height="1200"
+    frameborder="0"
+    scrolling="no"
+    style="display:block; width:100%; min-height:1200px; border:0; overflow:hidden; background:#fff;">
+  </iframe>
+</div>
+
+<style>
+  .academic-work-frame { width:100%; max-width:1440px; margin:0 auto; background:#fff; }
+  .academic-work-frame iframe { display:block; width:100%; min-height:1200px; border:0; overflow:hidden; background:#fff; }
+  @media (max-width:768px) { .academic-work-frame iframe { min-height:1600px; } }
+</style>
+
+<script>
+  window.addEventListener("message", function (event) {
+    if (event.origin !== "https://yoorhi816.github.io") return;
+    if (!event.data) return;
+    if (event.data.type !== "erica-handbook:resize") return;
+    if (event.data.slug !== "credit-cancellation") return;
+    var frame = document.getElementById("ericaHandbook-credit-cancellation");
+    if (!frame) return;
+    if (event.source !== frame.contentWindow) return;
+    var height = Number(event.data.height);
+    if (!Number.isFinite(height)) return;
+    var nextHeight = Math.max(1200, Math.ceil(height));
+    if (Math.abs(frame.offsetHeight - nextHeight) > 1) {
+      frame.style.height = nextHeight + "px";
+    }
+  });
+</script>

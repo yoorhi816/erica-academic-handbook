@@ -1601,6 +1601,11 @@ html[lang="zh-CN"] body,html[lang="zh-CN"] button,html[lang="zh-CN"] input,html[
 .regulation-language-only a{color:var(--blue);margin-left:8px}
 html[lang="en"] .nav-item,html[lang="en"] .nav-subitem,html[lang="en"] .nav-credit-menu summary,html[lang="en"] .content,html[lang="en"] .content p,html[lang="en"] .content li,html[lang="en"] .content th,html[lang="en"] .content td,html[lang="en"] .content h1,html[lang="en"] .content h2,html[lang="en"] .content h3,html[lang="en"] .content h4,html[lang="en"] .content h5{white-space:normal;word-break:normal;overflow-wrap:break-word;hyphens:auto}
 @media(max-width:700px){.language-switch{margin-left:auto}.language-switch a{font-size:10px;padding:3px 5px}.translation-notice{padding:8px 12px}.header-meta{display:none}.doc-head{padding-right:16px!important}.doc-head .language-switch{position:static;justify-content:flex-end;margin:0 0 10px}}
+</style><style id="micro-app-embed-style-20261109">
+.content .micro-app-panel{width:100%;margin-top:16px;background:#fff}
+.content .micro-app-panel[hidden]{display:none!important}
+.content .micro-app-panel iframe{display:block;width:100%;min-height:1200px;border:0;background:#fff}
+@media(max-width:768px){.content .micro-app-panel iframe{min-height:1600px}}
 </style></head>
 <body>
 <header class="site-header"><div class="logo">ERICA 통합 학사안내 편람<small>한양대학교</small></div>
@@ -1830,7 +1835,7 @@ function prepareMicroHandbookPage(){
  const linkPattern=/<p><strong>&lt;마이크로전공별 이수기준교과목\(학생용\)&gt;<\/strong><br>링크\(2026년 1학기 기준\):[\s\S]*?<\/p>/;
  const match=doc.html.match(linkPattern);if(!match)return;
  doc.html=doc.html.replace(linkPattern,'');
- const switcher='<div class="micro-view-switcher"><a class="micro-view-button" href="https://docs.google.com/spreadsheets/d/11VciL-MMSVYezUiEmWmtGbjjVC4YTlApBwUOdQQfxe4/edit?gid=0#gid=0" target="_blank" rel="noopener">목록형 보기 ↗</a><button type="button" class="micro-view-button primary" id="microCatalogToggle" onclick="toggleMicroCatalog()" aria-expanded="false">카드형 보기 ↗</button></div><section class="micro-static-panel" id="microStaticPanel" hidden><div class="micro-tools"><label>마이크로전공·운영부서·교과목 검색<input type="search" id="microStaticSearch" placeholder="예: 문화유산관리, 컴퓨터학부, 인공지능" oninput="renderStaticMicroPrograms(this.value)"></label></div><div class="micro-summary" id="microStaticSummary"></div><div class="micro-list" id="microStaticList"></div></section>';
+ const switcher='<div class="micro-view-switcher"><a class="micro-view-button" href="https://docs.google.com/spreadsheets/d/11VciL-MMSVYezUiEmWmtGbjjVC4YTlApBwUOdQQfxe4/edit?gid=0#gid=0" target="_blank" rel="noopener">목록형 보기 ↗</a><button type="button" class="micro-view-button primary" id="microCatalogToggle" onclick="toggleMicroCatalog()" aria-expanded="false">카드형 보기 ↗</button></div><section class="micro-app-panel" id="microAppPanel" hidden><iframe id="microAppFrame" title="마이크로전공 카드형 보기" data-src="https://script.google.com/macros/s/AKfycbwCh98GK66k6Kc7W8h_g1j-LhN5kuvmXB9q-0Rsov9NR_GpCSdTVnnEal5ar3enzERK8Q/exec" loading="lazy" width="100%" height="1200" frameborder="0" scrolling="yes"></iframe></section>';
  const processPattern=/(<strong>이수 과정 및 학위 수여<\/strong>[\s\S]*?<div class="work-accordion-body">[\s\S]*?<p>[\s\S]*?<\/p>)/;
  const heading='<p><strong>&lt;마이크로전공별 이수기준교과목(학생용)&gt;</strong></p>';doc.html=doc.html.replace(processPattern,'$1'+heading+switcher);
 }
@@ -1846,8 +1851,10 @@ function renderStaticMicroPrograms(query=''){
  list.innerHTML=programs.map(staticMicroCard).join('')||'<div class="micro-empty">검색 조건에 해당하는 마이크로전공이 없습니다.</div>';
 }
 function toggleMicroCatalog(){
- const panel=document.getElementById('microStaticPanel'),button=document.getElementById('microCatalogToggle');if(!panel||!button)return;
- const opening=panel.hidden;panel.hidden=!opening;button.setAttribute('aria-expanded',String(opening));button.textContent=opening?'카드형 닫기':'카드형 보기 ↗';if(opening)renderStaticMicroPrograms();
+ const panel=document.getElementById('microAppPanel'),frame=document.getElementById('microAppFrame'),button=document.getElementById('microCatalogToggle');if(!panel||!frame||!button)return;
+ const opening=panel.hidden;panel.hidden=!opening;
+ if(opening&&!frame.getAttribute('src'))frame.src=frame.dataset.src;
+ button.setAttribute('aria-expanded',String(opening));button.textContent=opening?'카드형 닫기':'카드형 보기 ↗';
 }
 prepareMicroHandbookPage();
 function renderMicroPrograms(query=''){

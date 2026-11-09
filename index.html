@@ -1604,7 +1604,7 @@ html[lang="en"] .nav-item,html[lang="en"] .nav-subitem,html[lang="en"] .nav-cred
 </style><style id="micro-app-embed-style-20261109">
 .content .micro-app-panel{width:100%;margin-top:16px;overflow:hidden;background:#fff}
 .content .micro-app-panel[hidden]{display:none!important}
-.content .micro-app-panel iframe{display:block;width:100%;height:1320px;min-height:1320px;margin-top:-120px;border:0;background:#fff}
+.content .micro-app-panel iframe{display:block;width:100%;height:1320px;min-height:1320px;margin:0;border:0;background:#fff;transform-origin:top left}
 @media(max-width:768px){.content .micro-app-panel iframe{height:1720px;min-height:1720px}}
 </style></head>
 <body>
@@ -1748,7 +1748,7 @@ function renderCurriculumPeriodContent(period){const root=document.querySelector
 function openDoc(id,curriculumPeriod){document.body.classList.remove('table-view-mode','department-view-mode','multi-major-wide-mode');const d=docs.find(x=>x.id===id)||docs[0];document.body.classList.toggle('multi-major-wide-mode',d.id==='iv-전공-다전공-제도-안내');if(d.title==='수업 및 수강 안내'){window.open('https://hhsly-tech.github.io/hanyang-erica-course-guide/','_blank','noopener,noreferrer');return;}if(d.title==='계절학기 안내'){window.open('https://shineunseo8-ai.github.io/seasonal-guide/','_blank','noopener,noreferrer');return;}if(d.title==='교직'){window.open('https://asteaching.hanyang.ac.kr/home','_blank','noopener,noreferrer');return;}document.getElementById('chapter').textContent=chapterCore(d.chapter);
 document.body.classList.remove('department-view-mode');
 document.getElementById('title').textContent=curriculumPeriod||d.title;document.getElementById('crumb').textContent=`학사편람 › ${chapterCore(d.chapter)} › ${curriculumPeriod||d.title}`;
-content.innerHTML=d.html||'<div class="empty">원문에 별도 본문이 없습니다.</div>';content.querySelectorAll('a[href]').forEach(link=>{try{const url=new URL(link.getAttribute('href'),location.href);if(/^https?:$/.test(url.protocol)&&url.origin!==location.origin){link.target='_blank';link.rel='noopener noreferrer';}}catch{}});if(d.chapter==='I. 규정'&&document.documentElement.lang==='ko')content.insertAdjacentHTML('afterbegin','<div class="regulation-language-only">규정은 국문으로만 제공됩니다.</div>');if(d.title==='교육과정'){content.classList.toggle('curriculum-period-view',!!curriculumPeriod);if(curriculumPeriod)renderCurriculumPeriodContent(curriculumPeriod);if(curriculumPeriod==='2025-2028 교육과정'){document.querySelector('.curriculum-course-search')?.remove();}else document.querySelector('.curriculum-course-search')?.remove();}else content.classList.remove('curriculum-period-view');markNoticeText();highlightSearchTerms();document.querySelector('.doc').classList.toggle('regulation-page',d.chapter==='I. 규정');if(!document.querySelector('.nav-item.active')){const a=document.querySelector(`[data-id="${CSS.escape(d.id)}"]`);a?.classList.add('active')}
+content.innerHTML=d.html||'<div class="empty">원문에 별도 본문이 없습니다.</div>';if(d.id==='iv-전공-마이크로전공')requestAnimationFrame(preloadMicroCatalog);content.querySelectorAll('a[href]').forEach(link=>{try{const url=new URL(link.getAttribute('href'),location.href);if(/^https?:$/.test(url.protocol)&&url.origin!==location.origin){link.target='_blank';link.rel='noopener noreferrer';}}catch{}});if(d.chapter==='I. 규정'&&document.documentElement.lang==='ko')content.insertAdjacentHTML('afterbegin','<div class="regulation-language-only">규정은 국문으로만 제공됩니다.</div>');if(d.title==='교육과정'){content.classList.toggle('curriculum-period-view',!!curriculumPeriod);if(curriculumPeriod)renderCurriculumPeriodContent(curriculumPeriod);if(curriculumPeriod==='2025-2028 교육과정'){document.querySelector('.curriculum-course-search')?.remove();}else document.querySelector('.curriculum-course-search')?.remove();}else content.classList.remove('curriculum-period-view');markNoticeText();highlightSearchTerms();document.querySelector('.doc').classList.toggle('regulation-page',d.chapter==='I. 규정');if(!document.querySelector('.nav-item.active')){const a=document.querySelector(`[data-id="${CSS.escape(d.id)}"]`);a?.classList.add('active')}
 const activeNav=document.querySelector(`[data-id="${CSS.escape(d.id)}"]`);if(activeNav?.classList.contains('nav-subitem'))activeNav.closest('details').open=true;
 document.getElementById('deptViewBtn').classList.remove('active');document.title=`${d.title} | ERICA 통합 학사안내 편람`;history.replaceState(null,'','#'+encodeURIComponent(d.id));closeMenu();scrollTo(0,0)}
 function docId(title){const d=docs.find(x=>x.title===title);return d?d.id:''}
@@ -1834,7 +1834,7 @@ function prepareMicroHandbookPage(){
  const doc=docs.find(item=>item.id==='iv-전공-마이크로전공');if(!doc)return;
  const linkPattern=/<p><strong>&lt;마이크로전공별 이수기준교과목\(학생용\)&gt;<\/strong><br>링크\(2026년 1학기 기준\):[\s\S]*?<\/p>/;
  doc.html=doc.html.replace(linkPattern,'');
- const switcher='<div class="micro-view-switcher"><a class="micro-view-button" href="https://docs.google.com/spreadsheets/d/11VciL-MMSVYezUiEmWmtGbjjVC4YTlApBwUOdQQfxe4/edit?gid=0#gid=0" target="_blank" rel="noopener">목록형 보기 ↗</a><button type="button" class="micro-view-button primary" id="microCatalogToggle" onclick="toggleMicroCatalog()" aria-expanded="false">카드형 보기 ↗</button></div><section class="micro-app-panel" id="microAppPanel" hidden><iframe id="microAppFrame" title="마이크로전공 카드형 보기" data-src="https://script.google.com/macros/s/AKfycbwCh98GK66k6Kc7W8h_g1j-LhN5kuvmXB9q-0Rsov9NR_GpCSdTVnnEal5ar3enzERK8Q/exec" loading="lazy" width="100%" height="1200" frameborder="0" scrolling="yes"></iframe></section>';
+ const switcher='<div class="micro-view-switcher"><a class="micro-view-button" href="https://docs.google.com/spreadsheets/d/11VciL-MMSVYezUiEmWmtGbjjVC4YTlApBwUOdQQfxe4/edit?gid=0#gid=0" target="_blank" rel="noopener">목록형 보기 ↗</a><button type="button" class="micro-view-button primary" id="microCatalogToggle" onclick="toggleMicroCatalog()" aria-expanded="false">카드형 보기 ↗</button></div><section class="micro-app-panel" id="microAppPanel" hidden><iframe id="microAppFrame" title="마이크로전공 카드형 보기" data-src="https://script.google.com/macros/s/AKfycbwCh98GK66k6Kc7W8h_g1j-LhN5kuvmXB9q-0Rsov9NR_GpCSdTVnnEal5ar3enzERK8Q/exec" loading="eager" width="100%" height="1200" frameborder="0" scrolling="yes"></iframe></section>';
  const processPattern=/(<strong>이수 과정 및 학위 수여<\/strong>[\s\S]*?<div class="work-accordion-body">[\s\S]*?<p>[\s\S]*?<\/p>)/;
  const heading='<p><strong>&lt;마이크로전공별 이수기준교과목(학생용)&gt;</strong></p>';doc.html=doc.html.replace(processPattern,'$1'+heading+switcher);
 }
@@ -1849,12 +1849,23 @@ function renderStaticMicroPrograms(query=''){
  summary.innerHTML='<span><strong>조회</strong> '+programs.length+'개</span>';
  list.innerHTML=programs.map(staticMicroCard).join('')||'<div class="micro-empty">검색 조건에 해당하는 마이크로전공이 없습니다.</div>';
 }
+function layoutMicroAppFrame(){
+ const panel=document.getElementById('microAppPanel'),frame=document.getElementById('microAppFrame');if(!panel||!frame)return;
+ const available=Math.max(320,panel.parentElement?.clientWidth||document.getElementById('content')?.clientWidth||920),desktop=window.matchMedia('(min-width:769px)').matches;
+ const layoutWidth=desktop?Math.max(920,available):available,scale=Math.min(1,available/layoutWidth),crop=120,visibleHeight=desktop?1200:1600;
+ frame.style.width=layoutWidth+'px';frame.style.height=(visibleHeight/scale+crop)+'px';frame.style.minHeight=frame.style.height;frame.style.marginTop=(-crop*scale)+'px';frame.style.transform='scale('+scale+')';
+ panel.style.height=visibleHeight+'px';
+}
+function preloadMicroCatalog(){
+ const frame=document.getElementById('microAppFrame');if(!frame)return;
+ layoutMicroAppFrame();if(!frame.getAttribute('src'))frame.src=frame.dataset.src;
+}
 function toggleMicroCatalog(){
- const panel=document.getElementById('microAppPanel'),frame=document.getElementById('microAppFrame'),button=document.getElementById('microCatalogToggle');if(!panel||!frame||!button)return;
- const opening=panel.hidden;panel.hidden=!opening;
- if(opening&&!frame.getAttribute('src'))frame.src=frame.dataset.src;
+ const panel=document.getElementById('microAppPanel'),button=document.getElementById('microCatalogToggle');if(!panel||!button)return;
+ const opening=panel.hidden;if(opening)preloadMicroCatalog();panel.hidden=!opening;
  button.setAttribute('aria-expanded',String(opening));button.textContent=opening?'카드형 닫기':'카드형 보기 ↗';
 }
+window.addEventListener('resize',()=>{if(document.getElementById('microAppFrame'))layoutMicroAppFrame()});
 prepareMicroHandbookPage();
 function renderMicroPrograms(query=''){
 const list=document.getElementById('microList');if(!list)return;

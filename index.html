@@ -1863,7 +1863,7 @@ function prepareMicroHandbookPage(){
  const doc=docs.find(item=>item.id==='iv-전공-마이크로전공');if(!doc)return;
  const linkPattern=/<p><strong>&lt;마이크로전공별 이수기준교과목\(학생용\)&gt;<\/strong><br>링크\(2026년 1학기 기준\):[\s\S]*?<\/p>/;
  doc.html=doc.html.replace(linkPattern,'');
- const switcher='<div class="micro-view-switcher"><a class="micro-view-button" href="https://docs.google.com/spreadsheets/d/11VciL-MMSVYezUiEmWmtGbjjVC4YTlApBwUOdQQfxe4/edit?gid=0#gid=0" target="_blank" rel="noopener">목록형 보기 ↗</a><button type="button" class="micro-view-button primary" id="microCatalogToggle" onclick="toggleMicroCatalog()" aria-expanded="false">카드형 보기 ↗</button></div><section class="micro-app-panel" id="microAppPanel" hidden><iframe id="microAppFrame" title="마이크로전공 카드형 보기" data-src="https://script.google.com/macros/s/AKfycbwCh98GK66k6Kc7W8h_g1j-LhN5kuvmXB9q-0Rsov9NR_GpCSdTVnnEal5ar3enzERK8Q/exec?v=20261116-3" loading="eager" width="100%" height="1200" frameborder="0" scrolling="yes"></iframe></section>';
+ const switcher='<div class="micro-view-switcher"><a class="micro-view-button" href="https://docs.google.com/spreadsheets/d/11VciL-MMSVYezUiEmWmtGbjjVC4YTlApBwUOdQQfxe4/edit?gid=0#gid=0" target="_blank" rel="noopener">목록형 보기 ↗</a><button type="button" class="micro-view-button primary" id="microCatalogToggle" onclick="toggleMicroCatalog()" aria-expanded="false">카드형 보기 ↗</button></div><section class="micro-app-panel" id="microAppPanel" hidden><iframe id="microAppFrame" title="마이크로전공 카드형 보기" data-src="https://script.google.com/macros/s/AKfycbwCh98GK66k6Kc7W8h_g1j-LhN5kuvmXB9q-0Rsov9NR_GpCSdTVnnEal5ar3enzERK8Q/exec?v=20261116-4" loading="eager" width="100%" height="1200" frameborder="0" scrolling="yes"></iframe></section>';
  const processPattern=/(<strong>이수 과정 및 학위 수여<\/strong>[\s\S]*?<div class="work-accordion-body">[\s\S]*?<p>[\s\S]*?<\/p>)/;
  const heading='<p><strong>&lt;마이크로전공별 이수기준교과목(학생용)&gt;</strong></p>';doc.html=doc.html.replace(processPattern,'$1'+heading+switcher);
 }
@@ -1881,8 +1881,8 @@ function renderStaticMicroPrograms(query=''){
 function layoutMicroAppFrame(){
  const panel=document.getElementById('microAppPanel'),frame=document.getElementById('microAppFrame');if(!panel||!frame)return;
  const available=Math.max(320,panel.parentElement?.clientWidth||document.getElementById('content')?.clientWidth||920),desktop=window.matchMedia('(min-width:769px)').matches;
- const layoutWidth=desktop?Math.max(920,available):available,scale=Math.min(1,available/layoutWidth),crop=105,visibleHeight=desktop?1200:1600;
- frame.style.width=layoutWidth+'px';frame.style.height=(visibleHeight/scale+crop)+'px';frame.style.minHeight=frame.style.height;frame.style.marginTop=(-crop*scale)+'px';frame.style.transform='scale('+scale+')';
+ const layoutWidth=desktop?Math.max(920,available):available,scale=Math.min(1,available/layoutWidth),visibleHeight=desktop?1200:1600;
+ frame.style.width=layoutWidth+'px';frame.style.height=(visibleHeight/scale)+'px';frame.style.minHeight=frame.style.height;frame.style.marginTop='0';frame.style.transform='scale('+scale+')';
  panel.style.height=visibleHeight+'px';
 }
 function preloadMicroCatalog(){
@@ -1963,9 +1963,8 @@ ${renderApplicationDashboard(academicStatus)}
 <article class="view-card"><h3>부전공·다중전공·복수전공</h3><p><strong>이수 기준:</strong> ${esc(unitForRules.multi_major)}</p><p><strong>전공 유의:</strong> ${esc(unitForRules.major_note)}</p>${linkButton('일반다중전공','다전공 안내')}</article>
 </div></div>
 <div class="view-subpanel" data-subpanel-group="major" data-subpanel="major-micro">
-<button type="button" id="microFeatureToggle" class="micro-feature-toggle">마이크로전공 (검색)</button><div class="micro-feature-body"><div class="micro-summary" id="microSummary"></div>
-<div class="micro-tools"><label>마이크로전공·운영부서·교과목 검색<input type="search" id="microSearch" placeholder="예: 문화유산관리, 컴퓨터학부, 인공지능"></label></div>
-<div class="micro-list" id="microList"></div>
+<button type="button" id="microFeatureToggle" class="micro-feature-toggle">마이크로전공 (검색)</button><div class="micro-feature-body">
+<section class="micro-app-panel" id="microDepartmentAppPanel"><iframe id="microDepartmentAppFrame" title="학과별 View 마이크로전공 검색" src="https://script.google.com/macros/s/AKfycbwCh98GK66k6Kc7W8h_g1j-LhN5kuvmXB9q-0Rsov9NR_GpCSdTVnnEal5ar3enzERK8Q/exec?v=20261116-4" loading="lazy" width="100%" height="1320" frameborder="0" scrolling="yes"></iframe></section>
 </div><div class="view-warning">마이크로전공이 개설된 학과 소속 학생은 주전공·부전공·다중전공·복수전공 여부에 따라 신청이 제한될 수 있습니다. 최종 신청 가능 여부는 해당 학기 공고와 운영부서에서 확인하세요.</div></div></section>
 <section class="view-category-panel" data-category="graduation"><h2 class="view-category-heading">졸업</h2>
 <div class="view-subtabs"><button class="view-subtab" data-subgroup="graduation" data-subpanel="graduation-requirements">졸업요건 (검색)</button></div>
@@ -2004,7 +2003,7 @@ document.getElementById('matrixZoomIn').addEventListener('click',()=>{matrixZoom
 document.getElementById('matrixPadding').addEventListener('input',event=>{matrixPadding=Number(event.target.value);applyMatrixControls()});
 document.getElementById('matrixReset').addEventListener('click',()=>{matrixZoom=100;matrixPadding=8;document.getElementById('matrixPadding').value=matrixPadding;applyMatrixControls()});
 document.getElementById('matrixDownload').addEventListener('click',downloadGraduationCsv);
-document.getElementById('microSearch').addEventListener('input',event=>renderMicroPrograms(event.target.value));
+document.getElementById('microSearch')?.addEventListener('input',event=>renderMicroPrograms(event.target.value));
 renderMicroPrograms();showViewCategory(activeViewCategory);showViewSubPanel('major',activeMajorSub);showViewSubPanel('graduation',activeGraduationSub);applyMatrixControls()}
 function refillUnits(){
 const college=DEPARTMENTS.find(x=>x.college===document.getElementById('collegeSelect').value)||DEPARTMENTS[0];

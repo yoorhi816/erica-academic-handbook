@@ -1658,7 +1658,7 @@ body.embed-mode .layout{display:block!important}
 <div class="header-meta">수정본 기준 2026.11.16</div><button class="menu-btn" id="menuBtn" aria-label="목차 열기">☰</button></header>
 <div class="layout"><aside class="sidebar" id="sidebar"><div class="sidebar-tools">
 <input class="search" id="search" type="search" placeholder="학사편람 전체 검색" aria-label="학사편람 전체 검색">
-<div class="summary" id="summary"></div></div><div class="top-nav-bar"><div class="top-nav-actions"><button type="button" class="dept-view-btn" id="deptViewBtn">학과별 View</button><button type="button" class="dept-view-btn table-view-btn" id="tableViewBtn">표 View</button></div><nav class="nav" id="nav" aria-label="학사편람 목차"></nav></div></aside>
+<div class="summary" id="summary"></div></div><div class="top-nav-bar"><div class="top-nav-actions"><button type="button" class="dept-view-btn" id="deptViewBtn">학과별 View</button></div><nav class="nav" id="nav" aria-label="학사편람 목차"></nav></div></aside>
 <main class="main"><div class="crumb" id="crumb"></div><article class="doc"><header class="doc-head">
 <nav class="language-switch" aria-label="Language"><a href="index.html" data-language-file="index.html" class="active" aria-current="page">KOR</a><a href="index-en.html" data-language-file="index-en.html">ENG</a><a href="index-zh.html" data-language-file="index-zh.html">CHN</a></nav><span class="chapter" id="chapter"></span><h1 id="title"></h1>
 </header><div class="content" id="content"></div></article></main></div><div class="overlay" id="overlay"></div>
@@ -2039,7 +2039,7 @@ const chapterButtons=chapterOrder.map(chapter=>'<button type="button" class="tab
 document.getElementById('content').innerHTML='<p class="view-intro">대분류를 선택하면 각 대분류 2 제목 아래에서 해당 표를 바로 확인할 수 있습니다.</p><nav class="table-view-chapters" aria-label="표 대분류">'+chapterButtons+'</nav><div class="table-view-toolbar"><input id="tableViewSearch" type="search" placeholder="선택한 대분류 안에서 업무·제목 검색" aria-label="표 View 검색" value="'+esc(filter)+'"><span class="table-view-count">'+count+'개 표</span></div><section class="table-view-chapter"><h2 class="table-view-chapter-title">'+esc(activeTableChapter)+'</h2><div id="tableViewResults">'+(groups.join('')||'<div class="table-view-empty">선택한 대분류에서 검색 조건에 맞는 표가 없습니다.</div>')+'</div></section>';
 markNoticeText();const searchBox=document.getElementById('tableViewSearch');searchBox.addEventListener('input',e=>{const value=e.target.value;renderTableView(value,activeTableChapter);const next=document.getElementById('tableViewSearch');next?.focus();next?.setSelectionRange(value.length,value.length)});document.querySelector('.table-view-chapters')?.addEventListener('click',e=>{const button=e.target.closest('[data-table-chapter]');if(button)renderTableView(document.getElementById('tableViewSearch')?.value||'',button.dataset.tableChapter)});}
 function openTableView(){document.body.classList.remove('department-view-mode','multi-major-wide-mode');document.body.classList.add('table-view-mode');document.querySelector('.doc').classList.remove('regulation-page');document.querySelectorAll('[data-id]').forEach(x=>x.classList.remove('active'));document.getElementById('deptViewBtn').classList.remove('active');document.getElementById('tableViewBtn').classList.add('active');document.getElementById('chapter').textContent='통합 학사안내 편람';document.getElementById('title').textContent='표 View';document.getElementById('crumb').textContent='학사편람 › 표 View';renderTableView();document.title='표 View | ERICA 통합 학사안내 편람';history.replaceState(null,'','#표-view');closeMenu();scrollTo(0,0)}
-document.getElementById('deptViewBtn').addEventListener('click',openDepartmentView);document.getElementById('tableViewBtn').addEventListener('click',openTableView);
+document.getElementById('deptViewBtn').addEventListener('click',openDepartmentView);
 search.addEventListener('input',()=>{const q=search.value.trim().toLocaleLowerCase('ko');const terms=q.split(/\s+/).filter(Boolean);
 const hits=q?docs.filter(d=>terms.every(t=>(d.chapter+' '+d.title+' '+d.search).toLocaleLowerCase('ko').includes(t))):docs;
 renderNav(hits);summary.textContent=q?`${hits.length}개 항목에서 찾음`:`수정본 ${docs.length}개 항목`;highlightSearchTerms()});
@@ -2063,7 +2063,7 @@ if(EMBED_MODE){
     content.innerHTML='<div class="empty"><strong>지원하지 않는 업무별 주소입니다.</strong><br>홈페이지 관리자에게 올바른 embed 주소를 확인해 주세요.</div>';
     document.title='업무별 안내 주소 확인 | ERICA 통합 학사안내 편람';
   }
-}else{initialHash==='학과별-view'?openDepartmentView():initialHash==='표-view'?openTableView():openDoc(initialHash||docs[0].id)}
+}else{initialHash==='학과별-view'?openDepartmentView():openDoc(initialHash&&initialHash!=='표-view'?initialHash:docs[0].id)}
 </script><script id="convergence-purpose-modal-script">
 document.addEventListener('click',function(event){
   var button=event.target.closest&&event.target.closest('.convergence-purpose-button');
@@ -2210,6 +2210,16 @@ document.querySelectorAll('.language-switch a').forEach(link=>link.addEventListe
 (function(){
   const nav=document.getElementById('nav');
   if(!nav)return;
+  nav.addEventListener('pointerover',function(event){
+    if(!window.matchMedia('(min-width:901px)').matches)return;
+    const current=event.target.closest('[data-top-nav-group]');
+    if(!current)return;
+    nav.querySelectorAll('[data-top-nav-group].open').forEach(function(item){
+      if(item===current)return;
+      item.classList.remove('open');
+      item.querySelector('.top-nav-trigger')?.setAttribute('aria-expanded','false');
+    });
+  });
   nav.addEventListener('click',function(event){
     const trigger=event.target.closest('.top-nav-trigger');
     if(!trigger)return;

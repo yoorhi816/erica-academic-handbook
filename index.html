@@ -1656,6 +1656,10 @@ html[lang="en"] .nav-item,html[lang="en"] .nav-subitem,html[lang="en"] .nav-cred
 }
 body.embed-mode .sidebar{display:none!important}
 body.embed-mode .layout{display:block!important}
+</style>
+<style id="credit-abandonment-guide-final-alignment-style">
+#content#content table.credit-abandonment-guide-table tbody td:nth-child(2),
+body .table-view table.credit-abandonment-guide-table tbody td:nth-child(2){text-align:left!important;text-align-last:left!important;text-justify:auto!important}
 </style></head>
 <body>
 <header class="site-header"><div class="logo">ERICA 통합 학사안내 편람<small>한양대학교</small></div>
@@ -2222,6 +2226,14 @@ document.querySelectorAll('.language-switch a').forEach(link=>link.addEventListe
       item.classList.remove('open');
       item.querySelector('.top-nav-trigger')?.setAttribute('aria-expanded','false');
     });
+  });
+  nav.addEventListener('pointerleave',function(){
+    if(!window.matchMedia('(min-width:901px)').matches)return;
+    nav.querySelectorAll('[data-top-nav-group].open').forEach(function(item){
+      item.classList.remove('open');
+      item.querySelector('.top-nav-trigger')?.setAttribute('aria-expanded','false');
+    });
+    if(nav.contains(document.activeElement))document.activeElement.blur();
   });
   nav.addEventListener('click',function(event){
     const trigger=event.target.closest('.top-nav-trigger');

@@ -2252,4 +2252,67 @@ document.querySelectorAll('.language-switch a').forEach(link=>link.addEventListe
     nav.querySelectorAll('[data-top-nav-group].open').forEach(function(item){item.classList.remove('open');item.querySelector('.top-nav-trigger')?.setAttribute('aria-expanded','false')});
   });
 })();
+</script>
+<style id="major-credit-instant-help-style">
+.major-credit-requirements-table .credit-bracket-help{cursor:default;text-decoration:none}
+.major-credit-requirements-table .mobile-credit-break{display:none}
+.credit-help-tooltip{position:fixed;z-index:99999;display:none;max-width:min(420px,calc(100vw - 24px));padding:7px 10px;border:1px solid #9fb4cc;border-radius:4px;background:#fff;color:#172b45;font-size:13px;line-height:1.45;box-shadow:0 4px 14px rgba(23,43,69,.18);pointer-events:none}
+@media(max-width:700px){.major-credit-requirements-table .mobile-credit-break{display:block}}
+</style>
+<script id="major-credit-instant-help-runtime">
+(function(){
+  const roundHelp='( ): 단일전공 시의 3학년 편입생의 최소 전공 이수학점을 의미';
+  const squareHelp='[ ]: 부전공/다중전공/복수전공의 전공핵심 이수학점을 의미';
+  const tooltip=document.createElement('div');
+  tooltip.className='credit-help-tooltip';
+  tooltip.setAttribute('role','tooltip');
+  document.body.append(tooltip);
+
+  function enhance(root){
+    root.querySelectorAll?.('.major-credit-requirements-table tbody tr').forEach(function(row){
+      const cells=[...row.cells];
+      const departmentIndex=cells.findIndex(function(cell){return cell.classList.contains('major-credit-department')});
+      if(departmentIndex<0)return;
+      cells.forEach(function(cell,index){
+        if(cell.dataset.creditHelpReady==='true')return;
+        const match=cell.textContent.trim().match(/^(\d+(?:\.\d+)?)\((\d+(?:\.\d+)?)\)$/);
+        if(!match)return;
+        const square=index>=departmentIndex+6;
+        const bracket=square?'['+match[2]+']':'('+match[2]+')';
+        const help=square?squareHelp:roundHelp;
+        const value=document.createElement('span');
+        value.textContent=match[1];
+        const mobileBreak=document.createElement('span');
+        mobileBreak.className='mobile-credit-break';
+        mobileBreak.setAttribute('aria-hidden','true');
+        const bracketHelp=document.createElement('span');
+        bracketHelp.className='credit-bracket-help';
+        bracketHelp.dataset.creditHelp=help;
+        bracketHelp.setAttribute('aria-label',bracket+' — '+help);
+        bracketHelp.tabIndex=0;
+        bracketHelp.textContent=bracket;
+        cell.replaceChildren(value,mobileBreak,bracketHelp);
+        cell.dataset.creditHelpReady='true';
+      });
+    });
+  }
+  function show(target){
+    tooltip.textContent=target.dataset.creditHelp||'';
+    tooltip.style.display='block';
+    const rect=target.getBoundingClientRect(),tip=tooltip.getBoundingClientRect();
+    const left=Math.max(12,Math.min(innerWidth-tip.width-12,rect.left+(rect.width-tip.width)/2));
+    let top=rect.top-tip.height-7;
+    if(top<8)top=rect.bottom+7;
+    tooltip.style.left=left+'px';
+    tooltip.style.top=top+'px';
+  }
+  function hide(){tooltip.style.display='none'}
+  const content=document.getElementById('content');
+  enhance(content||document);
+  if(content)new MutationObserver(function(){enhance(content)}).observe(content,{childList:true,subtree:true});
+  document.addEventListener('pointerover',function(event){const target=event.target.closest?.('.credit-bracket-help[data-credit-help]');if(target)show(target)});
+  document.addEventListener('pointerout',function(event){const target=event.target.closest?.('.credit-bracket-help[data-credit-help]');if(target&&!target.contains(event.relatedTarget))hide()});
+  document.addEventListener('focusin',function(event){const target=event.target.closest?.('.credit-bracket-help[data-credit-help]');if(target)show(target)});
+  document.addEventListener('focusout',function(event){if(event.target.closest?.('.credit-bracket-help[data-credit-help]'))hide()});
+})();
 </script></body></html>
